@@ -13,7 +13,9 @@
 /.phpunit.result.cache
 
 .env
+.env.dev
 
 .idea/
+.editorconfig
 
 docker/postgres_data/
