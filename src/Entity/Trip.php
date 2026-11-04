@@ -121,4 +121,9 @@ class Trip
 
         return $this;
     }
+
+    public function __toString(): string
+    {
+        return $this->title ?? 'Trip #' . $this->id;
+    }
 }
