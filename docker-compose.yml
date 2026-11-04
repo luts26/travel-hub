@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  nginx:
+    image: nginx:alpine
+    container_name: travel_nginx
+    ports:
+      - "8090:80"
+    volumes:
+      - ./:/var/www/html
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - php
+
+  php:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: travel_php
+    volumes:
+      - ./:/var/www/html
+    environment:
+      - DATABASE_URL=postgresql://app_user:app_password@postgres:5432/travel_db?serverVersion=15&charset=utf8
+      - MESSENGER_TRANSPORT_DSN=amqp://guest:guest@rabbitmq:5672/%2f/messages
+    depends_on:
+      - postgres
+      - redis
+      - rabbitmq
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: travel_postgres
+    environment:
+      POSTGRES_DB: travel_db
+      POSTGRES_USER: app_user
+      POSTGRES_PASSWORD: app_password
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:alpine
+    container_name: travel_redis
+    ports:
+      - "6379:6379"
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: travel_rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672" # Веб-панель керування RabbitMQ
+
+volumes:
+  postgres_data:
