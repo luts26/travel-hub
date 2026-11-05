@@ -25,12 +25,14 @@
                     <div class="card-body">
                         {{ form_start(review_form, {'attr': {'novalidate': 'novalidate'}}) }}
                         {{ form_errors(review_form) }}
-                        <div class="mb-3">
-                            {{ form_row(review_form.author, {'attr': {'class': 'form-control'}}) }}
-                        </div>
-                        <div class="mb-3">
-                            {{ form_row(review_form.email, {'attr': {'class': 'form-control'}}) }}
-                            {{ form_errors(review_form.email) }}
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form_row(review_form.author, {'attr': {'class': 'form-control'}}) }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form_row(review_form.email, {'attr': {'class': 'form-control'}}) }}
+                                {{ form_errors(review_form.email) }}
+                            </div>
                         </div>
                         <div class="mb-3">
                             {{ form_row(review_form.comment, {'attr': {'class': 'form-control', 'rows': 4}}) }}
