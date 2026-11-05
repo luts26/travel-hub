@@ -6,12 +6,14 @@ use App\Entity\Review;
 use App\Entity\Trip;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
+use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Component\HttpFoundation\Response;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Menu\CrudMenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Menu\DashboardMenuItem;
 
+#[IsGranted('ROLE_ADMIN')]
 #[AdminDashboard(routePath: '/admin', routeName: 'admin')]
 class DashboardController extends AbstractDashboardController
 {
@@ -32,5 +34,6 @@ class DashboardController extends AbstractDashboardController
         yield new DashboardMenuItem('Dashboard', 'fa fa-home');
         yield new CrudMenuItem('Reviews',  'fas fa-comments', Review::class);
         yield new CrudMenuItem('Trips',  'fas fa-map-marked-alt', Trip::class);
+        yield MenuItem::linkToRoute('На сайт', 'fa fa-globe', 'app_home');
     }
 }

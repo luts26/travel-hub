@@ -6,7 +6,7 @@
     <div class="container my-5">
         <a href="{{ path('app_home') }}" class="btn btn-outline-secondary mb-4">&larr; Назад до списку</a>
 
-        <div class="card shadow-sm mb-4">
+        <div class="card shadow-sm mb-5">
             <div class="card-body">
                 <h1 class="card-title">{{ trip.city }} <span class="text-muted">({{ trip.country }})</span></h1>
                 <p class="text-muted">Дата початку: {{ trip.startDate ? trip.startDate|date('Y-m-d') : 'Не вказано' }}</p>
@@ -15,41 +15,32 @@
                 {% endif %}
             </div>
         </div>
-        <hr class="my-5">
-
         <h3 class="mb-3">Залишити відгук</h3>
-
         <div class="card bg-light shadow-sm mb-5">
             <div class="card-body">
-                <div class="card bg-light shadow-sm mb-5">
-                    <div class="card-body">
-                        {{ form_start(review_form, {'attr': {'novalidate': 'novalidate'}}) }}
-                        {{ form_errors(review_form) }}
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                {{ form_row(review_form.author, {'attr': {'class': 'form-control'}}) }}
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                {{ form_row(review_form.email, {'attr': {'class': 'form-control'}}) }}
-                                {{ form_errors(review_form.email) }}
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            {{ form_row(review_form.comment, {'attr': {'class': 'form-control', 'rows': 4}}) }}
-                        </div>
-                        <div class="mb-3">
-                            {{ form_row(review_form.rating, {'attr': {'class': 'form-control', 'min': 1, 'max': 5}}) }}
-                        </div>
-
-                        <button type="submit" class="btn btn-primary mt-3">Надіслати відгук</button>
-                        {{ form_end(review_form) }}
+                {{ form_start(review_form, {'attr': {'novalidate': 'novalidate'}}) }}
+                {{ form_errors(review_form) }}
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        {{ form_row(review_form.author, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        {{ form_row(review_form.email, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(review_form.email) }}
                     </div>
                 </div>
+                <div class="mb-3">
+                    {{ form_row(review_form.comment, {'attr': {'class': 'form-control', 'rows': 4}}) }}
+                </div>
+                <div class="mb-3">
+                    {{ form_row(review_form.rating, {'attr': {'class': 'form-control', 'min': 1, 'max': 5}}) }}
+                </div>
+
+                <button type="submit" class="btn btn-primary mt-3">Надіслати відгук</button>
+                {{ form_end(review_form) }}
             </div>
         </div>
-        <hr class="my-5">
         <h2 class="mb-3">Відгуки мандрівників ({{ total_reviews }})</h2>
-
         <div class="list-group">
             {% for review in reviews %}
                 <div class="list-group-item list-group-item-action py-3">
