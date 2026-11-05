@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ trip.city }}, {{ trip.country }} - TravelHub{% endblock %}
+
+{% block body %}
+    <div class="container my-5">
+        <a href="{{ path('app_home') }}" class="btn btn-outline-secondary mb-4">&larr; Назад до списку</a>
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h1 class="card-title">{{ trip.city }} <span class="text-muted">({{ trip.country }})</span></h1>
+                <p class="text-muted">Дата початку: {{ trip.startDate ? trip.startDate|date('Y-m-d') : 'Не вказано' }}</p>
+                {% if trip.description %}
+                    <p class="card-text mt-3">{{ trip.description }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <h2 class="mb-3">Відгуки мандрівників ({{ reviews|length }})</h2>
+
+        <div class="list-group">
+            {% for review in reviews %}
+                <div class="list-group-item list-group-item-action py-3">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">{{ review.author }}</h5>
+                        <small class="text-muted">{{ review.createdAt ? review.createdAt|date('Y-m-d H:i') : '' }}</small>
+                    </div>
+                    <p class="mb-1 mt-2">{{ review.comment|raw }}</p>
+                    <small class="text-warning">Рейтинг: {{ review.rating }} / 5</small>
+                </div>
+            {% else %}
+                <p class="text-muted">Для цієї подорожі ще немає відгуків. Будьте першим!</p>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

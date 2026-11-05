@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}TravelHub | List of the travels{% endblock %}
+
+{% block body %}
+    <div class="container my-5">
+        <h1>Welcome to TravelHub!</h1>
+        <p class="lead">Оберіть подорож, щоб переглянути деталі та відгуки:</p>
+
+        <div class="list-group mt-4">
+            {% for trip in trips %}
+                <a href="{{ path('trip_show', {id: trip.id}) }}" class="list-group-item list-group-item-action">
+                    <h5 class="mb-1">{{ trip.city }} ({{ trip.country }})</h5>
+                    <small class="text-muted">Дата початку: {{ trip.startDate ? trip.startDate|date('Y-m-d') : 'Не вказано' }}</small>
+                </a>
+            {% else %}
+                <p class="text-muted">Подорожей поки немає. Створіть їх через <a href="/admin">адмін-панель</a>!</p>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
