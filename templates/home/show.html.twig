@@ -46,7 +46,7 @@
             </div>
         </div>
         <hr class="my-5">
-        <h2 class="mb-3">Відгуки мандрівників ({{ reviews|length }})</h2>
+        <h2 class="mb-3">Відгуки мандрівників ({{ total_reviews }})</h2>
 
         <div class="list-group">
             {% for review in reviews %}
@@ -62,5 +62,27 @@
                 <p class="text-muted">Для цієї подорожі ще немає відгуків. Будьте першим!</p>
             {% endfor %}
         </div>
+        {% if max_pages > 1 %}
+            <nav aria-label="Pagination">
+                <ul class="pagination justify-content-center">
+                    {# Кнопка Назад #}
+                    <li class="page-item {{ current_page <= 1 ? 'disabled' : '' }}">
+                        <a class="page-link" href="{{ path('trip_show', {id: trip.id, page: current_page - 1}) }}">Попередня</a>
+                    </li>
+
+                    {# Номери сторінок #}
+                    {% for i in range(1, max_pages) %}
+                        <li class="page-item {{ current_page == i ? 'active' : '' }}">
+                            <a class="page-link" href="{{ path('trip_show', {id: trip.id, page: i}) }}">{{ i }}</a>
+                        </li>
+                    {% endfor %}
+
+                    {# Кнопка Вперед #}
+                    <li class="page-item {{ current_page >= max_pages ? 'disabled' : '' }}">
+                        <a class="page-link" href="{{ path('trip_show', {id: trip.id, page: current_page + 1}) }}">Наступна</a>
+                    </li>
+                </ul>
+            </nav>
+        {% endif %}
     </div>
 {% endblock %}
