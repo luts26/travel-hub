@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\ReviewRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ReviewRepository::class)]
 class Review
@@ -15,9 +16,13 @@ class Review
     private ?int $id = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Assert\NotBlank(message: 'Коментар не може бути порожнім.')]
+    #[Assert\Length(min: 5, minMessage: 'Коментар занадто короткий (мінімум 5 символів).')]
     private ?string $comment = null;
 
     #[ORM\Column]
+    #[Assert\NotBlank]
+    #[Assert\Range(min: 1, max: 5, notInRangeMessage: 'Рейтинг має бути від {{ min }} до {{ max }}.')]
     private ?int $rating = null;
 
     #[ORM\Column]
@@ -28,9 +33,13 @@ class Review
     private ?Trip $trip = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: 'Будь ласка, введіть ваше ім’я.')]
     private ?string $author = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Email(
+        mode: 'strict',
+        message: 'Введіть коректну email адресу.')]
     private ?string $email = null;
 
     public function __construct()
