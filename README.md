@@ -73,8 +73,8 @@ The application will be accessible at: **`http://localhost:8090`**
 - [x] Symfony framework initialization
 - [x] Integration of Symfony Web Profiler & MakerBundle
 - [x] Initial domain entities mapping (`Trip`, `Review`) and database migrations
+- [x] Redis caching layer integration
 - [ ] Controller implementation and REST API endpoints
-- [ ] Redis caching layer integration
 - [ ] Asynchronous task processing (e.g., photo upload optimization via RabbitMQ)
 - [ ] Unit & Integration testing suite (PHPUnit)
 
