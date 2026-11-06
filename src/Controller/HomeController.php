@@ -16,14 +16,17 @@ use Symfony\Component\Routing\Attribute\Route;
 final class HomeController extends AbstractController
 {
     #[Route('/', name: 'app_home')]
-    public function index(Request $request, TripRepository $tripRepository): Response
+    public function index(Request $request, TripRepository $tripRepository, ReviewRepository $reviewRepository): Response
     {
         $searchQuery = $request->query->get('q');
 
         $trips = $tripRepository->findByFilters($searchQuery);
 
+        $tripStats = $reviewRepository->getStatsForTrips($trips);
+
         return $this->render('home/index.html.twig', [
             'trips' => $trips,
+            'trip_stats' => $tripStats,
             'current_search' => $searchQuery,
         ]);
     }
@@ -40,6 +43,8 @@ final class HomeController extends AbstractController
 
             $entityManager->persist($review);
             $entityManager->flush();
+
+            $reviewRepository->clearTripCache($trip);
 
             $this->addFlash('success', 'Ваш відгук успішно додано!');
 

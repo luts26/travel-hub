@@ -26,15 +26,17 @@
             {% import 'components/rating.html.twig' as ratingMacro %}
 
             {% for trip in trips %}
+                {% set stats = trip_stats[trip.id] ?? {'avgRating': 0.0, 'reviewCount': 0} %}
                 <div class="card mb-3">
                     <div class="card-body">
                         <div class="row align-items-center px-4">
                             <div class="col-md-6">
                                 <h5 class="card-title">{{ trip.title }}</h5>
                                 <p class="">{{ trip.city }} ({{ trip.country }})</p>
+                                <div>відгуків: {{ stats.reviewCount }}</div>
                             </div>
                             <div class="col-md-6 text-end">
-                                {{ ratingMacro.render(trip.averageRating) }}
+                                {{ ratingMacro.render(stats.avgRating) }}
                                 <div class="mb-2">
                                     <small class="text-muted">Дата початку: {{ trip.startDate ? trip.startDate|date('Y-m-d') : 'Не вказано' }}</small>
                                 </div>

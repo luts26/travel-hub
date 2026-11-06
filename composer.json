@@ -12,6 +12,7 @@
         "doctrine/orm": "^3.7",
         "easycorp/easyadmin-bundle": "^5.8",
         "egulias/email-validator": "^4.0",
+        "predis/predis": "^3.7",
         "symfony/console": "7.4.*",
         "symfony/dotenv": "7.4.*",
         "symfony/flex": "^2",
