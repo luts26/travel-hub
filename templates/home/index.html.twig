@@ -8,14 +8,27 @@
         <p class="lead">Оберіть подорож, щоб переглянути деталі та відгуки:</p>
 
         <div class="list-group mt-4">
+            {% import 'components/rating.html.twig' as ratingMacro %}
+
             {% for trip in trips %}
-                <a href="{{ path('trip_show', {id: trip.id}) }}" class="list-group-item list-group-item-action">
-                    <h5 class="mb-1">{{ trip.city }} ({{ trip.country }})</h5>
-                    <small class="text-muted">Дата початку: {{ trip.startDate ? trip.startDate|date('Y-m-d') : 'Не вказано' }}</small>
-                </a>
-            {% else %}
-                <p class="text-muted">Подорожей поки немає. Створіть їх через <a href="/admin">адмін-панель</a>!</p>
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ trip.title }}</h5>
+
+                        {{ ratingMacro.render(trip.averageRating) }}
+
+                        <a href="{{ path('trip_show', {id: trip.id}) }}" class="btn btn-primary">Детальніше</a>
+                    </div>
+                </div>
             {% endfor %}
+{#            {% for trip in trips %}#}
+{#                <a href="{{ path('trip_show', {id: trip.id}) }}" class="list-group-item list-group-item-action mb-2">#}
+{#                    <h5 class="mb-1">{{ trip.city }} ({{ trip.country }})</h5>#}
+{#                    <small class="text-muted">Дата початку: {{ trip.startDate ? trip.startDate|date('Y-m-d') : 'Не вказано' }}</small>#}
+{#                </a>#}
+{#            {% else %}#}
+{#                <p class="text-muted">Подорожей поки немає. Створіть їх через <a href="/admin">адмін-панель</a>!</p>#}
+{#            {% endfor %}#}
         </div>
     </div>
 {% endblock %}

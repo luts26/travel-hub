@@ -1,6 +1,5 @@
 {% extends 'base.html.twig' %}
-
-{% block title %}{{ trip.city }}, {{ trip.country }} - TravelHub{% endblock %}
+{% block title %}{{ trip.city }}, {{ trip.country }} | TravelHub{% endblock %}
 
 {% block body %}
     <div class="container my-5">
@@ -8,7 +7,11 @@
 
         <div class="card shadow-sm mb-5">
             <div class="card-body">
-                <h1 class="card-title">{{ trip.city }} <span class="text-muted">({{ trip.country }})</span></h1>
+                <div class="d-flex align-items-center justify-content-between">
+                    <h1 class="card-title">{{ trip.city }} <span class="text-muted">({{ trip.country }})</span></h1>
+                    {% import 'components/rating.html.twig' as ratingMacro %}
+                    <div class="trip-rating">{{ ratingMacro.render(trip_rating) }}</div>
+                </div>
                 <p class="text-muted">Дата початку: {{ trip.startDate ? trip.startDate|date('Y-m-d') : 'Не вказано' }}</p>
                 {% if trip.description %}
                     <p class="card-text mt-3">{{ trip.description }}</p>
@@ -41,7 +44,7 @@
             </div>
         </div>
         <h2 class="mb-3">Відгуки мандрівників ({{ total_reviews }})</h2>
-        <div class="list-group">
+        <div class="list-group mb-3">
             {% for review in reviews %}
                 <div class="list-group-item list-group-item-action py-3">
                     <div class="d-flex w-100 justify-content-between">
@@ -60,7 +63,7 @@
                 <ul class="pagination justify-content-center">
                     {# Кнопка Назад #}
                     <li class="page-item {{ current_page <= 1 ? 'disabled' : '' }}">
-                        <a class="page-link" href="{{ path('trip_show', {id: trip.id, page: current_page - 1}) }}">Попередня</a>
+                        <a class="page-link" href="{{ path('trip_show', {id: trip.id, page: current_page - 1}) }}">Prev</a>
                     </li>
 
                     {# Номери сторінок #}
@@ -72,7 +75,7 @@
 
                     {# Кнопка Вперед #}
                     <li class="page-item {{ current_page >= max_pages ? 'disabled' : '' }}">
-                        <a class="page-link" href="{{ path('trip_show', {id: trip.id, page: current_page + 1}) }}">Наступна</a>
+                        <a class="page-link" href="{{ path('trip_show', {id: trip.id, page: current_page + 1}) }}">Next</a>
                     </li>
                 </ul>
             </nav>

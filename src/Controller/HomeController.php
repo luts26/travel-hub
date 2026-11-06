@@ -39,6 +39,8 @@ final class HomeController extends AbstractController
             $entityManager->persist($review);
             $entityManager->flush();
 
+            $this->addFlash('success', 'Ваш відгук успішно додано!');
+
             return $this->redirectToRoute('trip_show', ['id' => $trip->getId()]);
         }
 
@@ -52,6 +54,7 @@ final class HomeController extends AbstractController
 
         return $this->render('/home/show.html.twig', [
            'trip' => $trip,
+           'trip_rating' => $reviewRepository->getAverageRatingForTrip($trip),
            'reviews' => $reviews,
             'total_reviews' => $totalReviews,
             'current_page' => $page,

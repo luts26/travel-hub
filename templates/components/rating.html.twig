@@ -1,0 +1,13 @@
+{% macro render(rating) %}
+    <div class="text-warning mb-2">
+        {% set roundedRating = rating|default(0)|round %}
+        {% for i in 1..5 %}
+            {% if i <= roundedRating %}
+                <i class="fas fa-star"></i>
+            {% else %}
+                <i class="far fa-star"></i>
+            {% endif %}
+        {% endfor %}
+        <span class="text-muted ms-1 small">({{ rating|default(0)|number_format(1) }})</span>
+    </div>
+{% endmacro %}

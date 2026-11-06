@@ -130,7 +130,23 @@ class Trip
 
     public function __toString(): string
     {
-        return $this->title ?? 'Trip #' . $this->id;
+        return ($this->city && $this->country)
+            ? "{$this->city}, {$this->country}"
+            : ($this->title ?? 'Trip #' . $this->id);
+    }
+
+    public function getAverageRating(): float
+    {
+        if ($this->reviews->isEmpty()) {
+            return 0.0;
+        }
+
+        $sum = 0;
+        foreach ($this->reviews as $review) {
+            $sum += $review->getRating();
+        }
+
+        return round($sum / count($this->reviews), 1);
     }
 
     public function getCity(): ?string

@@ -31,4 +31,16 @@ class ReviewRepository extends ServiceEntityRepository
     {
         return $this->count(['trip' => $trip]);
     }
+
+    public function getAverageRatingForTrip(Trip $trip): float
+    {
+        $result = $this->createQueryBuilder('r')
+            ->select('AVG(r.rating) as avgRating')
+            ->andWhere('r.trip = :trip')
+            ->setParameter('trip', $trip)
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        return $result ? round((float) $result, 1) : 0.0;
+    }
 }
