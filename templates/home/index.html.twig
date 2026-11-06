@@ -4,8 +4,23 @@
 
 {% block body %}
     <div class="container my-5">
-        <h1>Welcome to TravelHub!</h1>
-        <p class="lead">Оберіть подорож, щоб переглянути деталі та відгуки:</p>
+        <h1 class="mb-5">Welcome to TravelHub!</h1>
+
+        <div class="row mb-5">
+            <div class="col-md-12">
+                <form method="get" action="{{ path('app_home') }}" class="row g-3 p-4 bg-light rounded shadow-sm">
+                    <div class="col-md-9">
+                        <input type="text" class="form-control" name="q" value="{{ current_search }}" placeholder="Пошук за назвою, містом або країною...">
+                    </div>
+                    <div class="col-md-3 d-flex gap-2">
+                        <button type="submit" class="btn btn-primary w-100">Шукати</button>
+                        <a href="{{ path('app_home') }}" class="btn btn-outline-secondary">Скинути</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <p class="lead">Доступні подорожі: Оберіть щоб переглянути деталі та відгуки:</p>
 
         <div class="list-group mt-4">
             {% import 'components/rating.html.twig' as ratingMacro %}
@@ -13,22 +28,22 @@
             {% for trip in trips %}
                 <div class="card mb-3">
                     <div class="card-body">
-                        <h5 class="card-title">{{ trip.title }}</h5>
-
-                        {{ ratingMacro.render(trip.averageRating) }}
-
-                        <a href="{{ path('trip_show', {id: trip.id}) }}" class="btn btn-primary">Детальніше</a>
+                        <div class="row align-items-center px-4">
+                            <div class="col-md-6">
+                                <h5 class="card-title">{{ trip.title }}</h5>
+                                <p class="">{{ trip.city }} ({{ trip.country }})</p>
+                            </div>
+                            <div class="col-md-6 text-end">
+                                {{ ratingMacro.render(trip.averageRating) }}
+                                <div class="mb-2">
+                                    <small class="text-muted">Дата початку: {{ trip.startDate ? trip.startDate|date('Y-m-d') : 'Не вказано' }}</small>
+                                </div>
+                                <a href="{{ path('trip_show', {id: trip.id}) }}" class="btn btn-primary">Детальніше</a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             {% endfor %}
-{#            {% for trip in trips %}#}
-{#                <a href="{{ path('trip_show', {id: trip.id}) }}" class="list-group-item list-group-item-action mb-2">#}
-{#                    <h5 class="mb-1">{{ trip.city }} ({{ trip.country }})</h5>#}
-{#                    <small class="text-muted">Дата початку: {{ trip.startDate ? trip.startDate|date('Y-m-d') : 'Не вказано' }}</small>#}
-{#                </a>#}
-{#            {% else %}#}
-{#                <p class="text-muted">Подорожей поки немає. Створіть їх через <a href="/admin">адмін-панель</a>!</p>#}
-{#            {% endfor %}#}
         </div>
     </div>
 {% endblock %}

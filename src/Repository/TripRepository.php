@@ -16,28 +16,15 @@ class TripRepository extends ServiceEntityRepository
         parent::__construct($registry, Trip::class);
     }
 
-//    /**
-//     * @return Trip[] Returns an array of Trip objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('t')
-//            ->andWhere('t.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('t.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    public function findByFilters(?string $query): array
+    {
+        $db = $this->createQueryBuilder('t');
 
-//    public function findOneBySomeField($value): ?Trip
-//    {
-//        return $this->createQueryBuilder('t')
-//            ->andWhere('t.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+        if ($query !== null && trim($query) !== '') {
+            $db->andWhere('t.title LIKE :query OR t.description LIKE :query OR t.city LIKE :query OR t.country LIKE :query')
+                ->setParameter('query', '%' . trim($query) . '%');
+        }
+
+        return $db->getQuery()->getResult();
+    }
 }
