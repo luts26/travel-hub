@@ -6,17 +6,16 @@ use App\Entity\Review;
 use App\Entity\Trip;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Contracts\Cache\CacheInterface;
-use Symfony\Contracts\Cache\ItemInterface;
+use Psr\Cache\CacheItemPoolInterface;
 
 /**
  * @extends ServiceEntityRepository<Review>
  */
 class ReviewRepository extends ServiceEntityRepository
 {
-    private CacheInterface $cache;
+    private CacheItemPoolInterface $cache;
 
-    public function __construct(ManagerRegistry $registry, CacheInterface $cache)
+    public function __construct(ManagerRegistry $registry, CacheItemPoolInterface $cache)
     {
         parent::__construct($registry, Review::class);
         $this->cache = $cache;
@@ -32,33 +31,9 @@ class ReviewRepository extends ServiceEntityRepository
         );
     }
 
-    public function countByTrip(Trip $trip): int
+    public function getTripStats(Trip $trip): array
     {
-        $cacheKey = 'trip_review_count_' . $trip->getId();
-        return $this->cache->get($cacheKey, function (ItemInterface $item) use ($trip) {
-            $item->expiresAfter(3600);
-
-            return $this->count(['trip' => $trip]);
-        });
-    }
-
-    public function getAverageRatingForTrip(Trip $trip): float
-    {
-        $cacheKey = 'trip_avg_rating_' . $trip->getId();
-
-        return $this->cache->get($cacheKey, function (ItemInterface $item) use ($trip) {
-
-            $item->expiresAfter(3600);
-
-            $result = $this->createQueryBuilder('r')
-                ->select('AVG(r.rating) as avgRating')
-                ->andWhere('r.trip = :trip')
-                ->setParameter('trip', $trip)
-                ->getQuery()
-                ->getSingleScalarResult();
-
-            return $result ? round((float) $result, 1) : 0.0;
-        });
+        return $this->getStatsForTrips([$trip])[$trip->getId()];
     }
 
     public function getStatsForTrips(array $trips): array
@@ -67,22 +42,49 @@ class ReviewRepository extends ServiceEntityRepository
             return [];
         }
 
-        $tripIds = array_map(fn($trip) => $trip->getId(), $trips);
-
-        $results = $this->createQueryBuilder('r')
-            ->select('IDENTITY(r.trip) as tripId', 'AVG(r.rating) as avgRating', 'COUNT(r.id) as reviewCount')
-            ->andWhere('r.trip IN (:trips)')
-            ->setParameter('trips', $tripIds)
-            ->groupBy('r.trip')
-            ->getQuery()
-            ->getResult();
-
         $stats = [];
-        foreach ($results as $row) {
-            $stats[$row['tripId']] = [
-                'avgRating' => round((float) $row['avgRating'], 1),
-                'reviewCount' => (int) $row['reviewCount'],
-            ];
+        $keyToTripId = [];
+
+        foreach ($trips as $trip) {
+            $keyToTripId['trip_stats_' . $trip->getId()] = $trip->getId();
+        }
+
+        $missingIds = [];
+        foreach ($this->cache->getItems(array_keys($keyToTripId)) as $key => $item) {
+            if ($item->isHit()) {
+                $stats[$keyToTripId[$key]] = $item->get();
+            } else {
+                $missingIds[] = $keyToTripId[$key];
+            }
+        }
+
+        if ($missingIds) {
+            $results = $this->createQueryBuilder('r')
+                ->select('IDENTITY(r.trip) as tripId', 'AVG(r.rating) as avgRating', 'COUNT(r.id) as reviewCount')
+                ->andWhere('r.trip IN (:trips)')
+                ->setParameter('trips', $missingIds)
+                ->groupBy('r.trip')
+                ->getQuery()
+                ->getResult();
+
+            $dbStats = [];
+            foreach ($results as $row) {
+                $dbStats[(int) $row['tripId']] = [
+                    'avgRating'   => $row['avgRating'] ? round((float) $row['avgRating'], 1) : 0.0,
+                    'reviewCount' => (int) $row['reviewCount'],
+                ];
+            }
+
+            foreach ($missingIds as $tripId) {
+                $tripStat = $dbStats[$tripId] ?? ['avgRating' => 0.0, 'reviewCount' => 0];
+                $stats[$tripId] = $tripStat;
+
+                $item = $this->cache->getItem('trip_stats_' . $tripId);
+                $item->set($tripStat)->expiresAfter(3600);
+                $this->cache->saveDeferred($item);
+            }
+
+            $this->cache->commit();
         }
 
         return $stats;
@@ -90,7 +92,6 @@ class ReviewRepository extends ServiceEntityRepository
 
     public function clearTripCache(Trip $trip): void
     {
-        $this->cache->delete('trip_avg_rating_' . $trip->getId());
-        $this->cache->delete('trip_review_count_' . $trip->getId());
+        $this->cache->deleteItem('trip_stats_' . $trip->getId());
     }
 }

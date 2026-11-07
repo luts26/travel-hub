@@ -56,14 +56,14 @@ final class HomeController extends AbstractController
         $offset = ($page - 1) * $limit;
 
         $reviews = $reviewRepository->getPaginationPaginated($trip, $offset, $limit);
-        $totalReviews = $reviewRepository->countByTrip($trip);
-        $maxPages = ceil($totalReviews / $limit);
+        $tripStats = $reviewRepository->getTripStats($trip);
+        $maxPages = ceil($tripStats['reviewCount'] / $limit);
 
         return $this->render('/home/show.html.twig', [
            'trip' => $trip,
-           'trip_rating' => $reviewRepository->getAverageRatingForTrip($trip),
+           'trip_rating' => $tripStats['avgRating'],
            'reviews' => $reviews,
-            'total_reviews' => $totalReviews,
+            'total_reviews' => $tripStats['reviewCount'],
             'current_page' => $page,
             'max_pages' => $maxPages,
             'review_form' => $form->createView(),
