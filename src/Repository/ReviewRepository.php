@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Review;
 use App\Entity\Trip;
+use App\Enum\ReviewStatus;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Cache\CacheItemPoolInterface;
@@ -24,8 +25,8 @@ class ReviewRepository extends ServiceEntityRepository
     public function getPaginationPaginated(Trip $trip, int $offset, int $limit): array
     {
         return $this->findBy(
-            ['trip' => $trip],
-            ['createdAt' => 'ASC'],
+            ['trip' => $trip, 'status' => ReviewStatus::Published],
+            ['createdAt' => 'DESC'],
             $limit,
             $offset
         );
@@ -63,6 +64,8 @@ class ReviewRepository extends ServiceEntityRepository
                 ->select('IDENTITY(r.trip) as tripId', 'AVG(r.rating) as avgRating', 'COUNT(r.id) as reviewCount')
                 ->andWhere('r.trip IN (:trips)')
                 ->setParameter('trips', $missingIds)
+                ->andWhere('r.status = :status')
+                ->setParameter('status', ReviewStatus::Published)
                 ->groupBy('r.trip')
                 ->getQuery()
                 ->getResult();

@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Enum\ReviewStatus;
 use App\Repository\ReviewRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -41,6 +42,9 @@ class Review
         mode: 'strict',
         message: 'Введіть коректну email адресу.')]
     private ?string $email = null;
+
+    #[ORM\Column(length: 20, enumType: ReviewStatus::class)]
+    private ReviewStatus $status = ReviewStatus::Submitted;
 
     public function __construct()
     {
@@ -120,6 +124,18 @@ class Review
     public function setEmail(?string $email): static
     {
         $this->email = $email;
+
+        return $this;
+    }
+
+    public function getStatus(): ReviewStatus
+    {
+        return $this->status;
+    }
+
+    public function setStatus(ReviewStatus $status): static
+    {
+        $this->status = $status;
 
         return $this;
     }

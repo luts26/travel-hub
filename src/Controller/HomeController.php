@@ -5,12 +5,14 @@ namespace App\Controller;
 use App\Entity\Review;
 use App\Entity\Trip;
 use App\Form\ReviewType;
+use App\Message\ReviewSubmitted;
 use App\Repository\ReviewRepository;
 use App\Repository\TripRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
 final class HomeController extends AbstractController
@@ -32,7 +34,13 @@ final class HomeController extends AbstractController
     }
 
     #[Route('/trip/{id<\d+>}', name: 'trip_show')]
-    public function show(Request $request, Trip $trip, EntityManagerInterface $entityManager, ReviewRepository $reviewRepository): Response
+    public function show(
+        Request $request,
+        Trip $trip,
+        EntityManagerInterface $entityManager,
+        ReviewRepository $reviewRepository,
+        MessageBusInterface $bus,
+    ): Response
     {
         $review = new Review();
         $form = $this->createForm(ReviewType::class, $review);
@@ -43,10 +51,9 @@ final class HomeController extends AbstractController
 
             $entityManager->persist($review);
             $entityManager->flush();
+            $bus->dispatch(new ReviewSubmitted($review->getId()));
 
-            $reviewRepository->clearTripCache($trip);
-
-            $this->addFlash('success', 'Ваш відгук успішно додано!');
+            $this->addFlash('success', "Дякуємо! Відгук з'явиться після перевірки");
 
             return $this->redirectToRoute('trip_show', ['id' => $trip->getId()]);
         }
