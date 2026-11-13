@@ -72,10 +72,13 @@ The application will be accessible at: **`http://localhost:8090`**
 - [x] Docker environment setup (PHP, Nginx, PostgreSQL, Redis, RabbitMQ)
 - [x] Symfony framework initialization
 - [x] Integration of Symfony Web Profiler & MakerBundle
-- [x] Initial domain entities mapping (`Trip`, `Review`) and database migrations
+- [x] Initial domain entities mapping (`Trip`, `Review`, `User`) and database migrations
+- [x] Admin panel setup (EasyAdmin CRUD controllers for Trips and Reviews)
+- [x] Frontend trip search, location filtering (by city/country), and sorting
+- [x] Comment/review pagination on trip details page
 - [x] Redis caching layer integration
+- [x] Asynchronous task processing (Integrated RabbitMQ via Symfony Messenger for background review moderation and message handling)
 - [ ] Controller implementation and REST API endpoints
-- [ ] Asynchronous task processing (e.g., photo upload optimization via RabbitMQ)
 - [ ] Unit & Integration testing suite (PHPUnit)
 
 ---
