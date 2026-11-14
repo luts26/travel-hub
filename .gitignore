@@ -14,8 +14,16 @@
 
 .env
 .env.dev
+.env.test
 
 .idea/
 .editorconfig
 
 docker/postgres_data/
+
+detail_project.info
+
+###> phpunit/phpunit ###
+/phpunit.xml
+/.phpunit.cache/
+###< phpunit/phpunit ###
